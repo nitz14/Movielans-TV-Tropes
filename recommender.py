@@ -10,7 +10,6 @@ Jak to powinno działać:
 dla każdego filmu f policz score(f) = SUMA PO WSZYSTKICH FILMACH f2 ( średni_score(f2) * odleglosc(f,f2) ) 
 
 odleglosc(f,f2) = waga1 * odleglosc_ocenowa(f,f2) + waga2 + 1 / (1 + odleglosc_tropowa(f,f2))
-
 """
 
 
@@ -26,9 +25,9 @@ class Recommender:
         self.movie_lens_recommender = MovieLens.MovieLens("movie_lens/test_movies.dat", "movie_lens/test_ratings.dat")
 
     def recommend(self, userID):
-        global EXAMPLE_TROPE_RECOMMENDATION, EXAMPLE_SCORE_RECOMMENDATION
-
         recommendations = self.movie_lens_recommender.predict_ratings(userID)
+        # tutaj mamy rekomendacje, trzeba dodać Marcina i zgodnie z wagami ustalić oceny dla sumy rekomendacji
+
         return recommendations
 
 if __name__ == "__main__":
