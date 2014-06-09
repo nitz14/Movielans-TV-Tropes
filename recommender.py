@@ -3,6 +3,7 @@
 
 import argparse
 from movie_lens import MovieLens
+from dbtropes import tropes_recommend as dbt_rec
 
 """
 Jak to powinno działać:
@@ -27,6 +28,9 @@ class Recommender:
     def recommend(self, userID):
         recommendations = self.movie_lens_recommender.predict_ratings(userID)
         # tutaj mamy rekomendacje, trzeba dodać Marcina i zgodnie z wagami ustalić oceny dla sumy rekomendacji
+        nr_of_wanted_recs = 10
+        # Aby dzialalo - nalezy skopiowac do tego folderu plik movies.lst i wypakowany plik matrix-20140601.lst .
+        slownik_nazwa_filmu_i_ocena = dbt_rec(["Teen Wolf", "Little Darlings", "Tego nie doda, bo to nie film"], nr_of_wanted_recs)
 
         return recommendations
 

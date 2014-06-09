@@ -14,6 +14,8 @@ def movies_to_nrs(s_movies):
     for line in movies:
         if s_movies[counter][1] < line[1]:
             counter += 1
+        if counter == len(s_movies):
+            return ret_list
         if s_movies[counter] == line.split(" @|@ ")[0][1:-1]:
             ret_list.append(m_counter)
             counter += 1
