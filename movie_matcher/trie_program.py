@@ -3,7 +3,6 @@
 #By Steve Hanov, 2011. Released to the public domain
 import time
 import sys
-from database import getDatabaseDict 
 
 # Keep some interesting statistics
 NodeCount = 0
@@ -82,18 +81,9 @@ def initDict(database):
     global WordCount, NodeCount, TRIE
     # read dictionary file into a trie
     trie = TrieNode()
-    for word in [d['name'] for d in database]:
+    for word in database:
         WordCount += 1
         trie.insert( word )
 
     # print "Read %d words into %d nodes" % (WordCount, NodeCount)
     TRIE = trie
-
-if __name__ == "__main__":
-    initDict(getDatabaseDict())
-    start = time.time()
-    results = search(sys.argv[1], int(sys.argv[2]))
-    end = time.time()
-
-    for result in results: print result       
-    print "Search took %g s" % (end - start)
