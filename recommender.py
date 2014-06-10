@@ -26,9 +26,15 @@ class Recommender:
         self.movie_lens_recommender = MovieLens.MovieLens("movie_lens/test_movies.dat", "movie_lens/test_ratings.dat")
 
     def recommend(self, userID):
-        # recommendations = self.movie_lens_recommender.predict_ratings(userID)
-        # Potrzebne matchowanie nazw filmow.
-        return dbt_rec([name for (name, _) in self.movie_lens_recommender.rated_movies[userID]])
+		alpha = 0.5
+		lista = {}
+        recommendations = self.movie_lens_recommender.predict_ratings(userID)
+        recommendations1 = dbt_rec([name for (name, _) in self.movie_lens_recommender.get_rated_movies(userID)])
+		for key in recommendations.keys():
+			if key in recommendations1:
+				lista[key] = alpha * recommendations[key] + (1 - alpha) * recommendations1[key]
+		return lista
+		#return self.movie_lens_recommender.predict_ratings(userID)
         # Aby dzialalo - nalezy skopiowac do tego folderu plik movies.lst i wypakowany plik matrix-20140601.lst .
         #slownik_nazwa_filmu_i_ocena = dbt_rec(["Teen Wolf", "Little Darlings", "Tego nie doda, bo to nie film"], nr_of_wanted_recs)
 
