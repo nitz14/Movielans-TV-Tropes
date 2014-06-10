@@ -8,6 +8,7 @@ class MovieLens:
     def __init__(self, movies_dat, ratings_dat):
         self.movies = {}
         self.rated_movies = {}
+        self.ratings = {}
 
         """
         Movie information is contained in the file movies_dat 
@@ -30,28 +31,21 @@ class MovieLens:
         ratings_file = open(ratings_dat, 'r')
         for line in ratings_file:
             values = line.split("::")
-            if values[0] not in self.rated_movies.keys():
-                self.rated_movies[values[0]] = []
-            movie_and_rating = (self.movies[values[1]], values[2])
-            self.rated_movies[values[0]].append(movie_and_rating)
+            if values[0] not in self.ratings.keys():
+                self.ratings[values[0]] = {}
+                for key in self.movies.keys():
+                    self.ratings[values[0]][self.movies[key]] = 0
+            self.ratings[values[0]][self.movies[values[1]]] = float(values[2])
 
         self.movies = self.movies.values()
  
-    def is_rated(self, user_id, title):
-        if user_id not in self.rated_movies.keys():
-            return False
-        if len([i for i, v in enumerate(self.rated_movies[user_id]) if v[0] == title]) == 0:
-            return False
-        return True
 
-
-    def get_rating(self, user_id, title):
-        if self.is_rated(user_id, title):
-            list = [i for i, v in enumerate(self.rated_movies[user_id]) if v[0] == title]
-            index = list[0]
-            return float(self.rated_movies[user_id][index][1])
-        return 0
-
+    def get_rated_movies(self, user_id):
+        rated_movies = []
+        for movie in self.movies:
+            if self.ratings[user_id][movie] != 0:
+                rated_movies.append((movie, self.ratings[user_id][movie]))
+        return rated_movies
 
     """
     This function calculates Pearson product-moment correlation coefficient.
@@ -65,12 +59,13 @@ class MovieLens:
         sum_of_y = 0
         sum_of_x_sq = 0
         sum_of_y_sq = 0
+        n = len(self.movies)
 
-        for i in range(0, len(self.movies)):
-            if self.is_rated(x, self.movies[i]) \
-               and self.is_rated(y, self.movies[i]):
-                x_rating = self.get_rating(x, self.movies[i])
-                y_rating = self.get_rating(y, self.movies[i])
+        for i in range(0, n):
+            if self.ratings[x][self.movies[i]] != 0 \
+               and self.ratings[y][self.movies[i]] != 0:
+                x_rating = self.ratings[x][self.movies[i]]
+                y_rating = self.ratings[y][self.movies[i]]
                 sum_of_mult += x_rating * y_rating
                 sum_of_x += x_rating
                 sum_of_x_sq += x_rating ** 2
@@ -100,23 +95,23 @@ class MovieLens:
     def predict_ratings(self, id):
         not_seen = []
         for movie in self.movies:
-            if not self.is_rated(id, movie):
+            if self.ratings[id][movie] == 0:
                 not_seen.append(movie)
     
         corr = {}
-        for person in self.rated_movies.keys():
+        for person in self.ratings.keys():
             if person != id:
                 corr[person] = self.pcc(id, person)
- 
-        ratings = []
+
+        pred_ratings = []
         for movie in not_seen:
             corr_sum = 0
             rating_sum = 0
-            for person in self.rated_movies.keys():
-                if self.is_rated(person, movie) and corr[person] > 0:
-                    rating_sum += corr[person] * self.get_rating(person, movie)
+            for person in self.ratings.keys():
+                if self.ratings[person][movie] != 0 and corr[person] > 0:
+                    rating_sum += corr[person] * self.ratings[person][movie]
                     corr_sum += corr[person]
             if corr_sum != 0:
-                ratings.append((movie, round((rating_sum / corr_sum), 3)))
+                pred_ratings.append((movie, round((rating_sum / corr_sum), 3)))
 
-        return ratings
+        return pred_ratings
