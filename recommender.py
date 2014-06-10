@@ -3,6 +3,7 @@
 
 import argparse
 from movie_lens import MovieLens
+from dbtropes import tropes_recommend as dbt_rec
 
 """
 Jak to powinno działać:
@@ -25,10 +26,13 @@ class Recommender:
         self.movie_lens_recommender = MovieLens.MovieLens("movie_lens/test_movies.dat", "movie_lens/test_ratings.dat")
 
     def recommend(self, userID):
-        recommendations = self.movie_lens_recommender.predict_ratings(userID)
-        # tutaj mamy rekomendacje, trzeba dodać Marcina i zgodnie z wagami ustalić oceny dla sumy rekomendacji
+        # recommendations = self.movie_lens_recommender.predict_ratings(userID)
+        # Potrzebne matchowanie nazw filmow.
+        return dbt_rec([name for (name, _) in self.movie_lens_recommender.rated_movies[userID]])
+        # Aby dzialalo - nalezy skopiowac do tego folderu plik movies.lst i wypakowany plik matrix-20140601.lst .
+        #slownik_nazwa_filmu_i_ocena = dbt_rec(["Teen Wolf", "Little Darlings", "Tego nie doda, bo to nie film"], nr_of_wanted_recs)
 
-        return recommendations
+        #return recommendations
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
