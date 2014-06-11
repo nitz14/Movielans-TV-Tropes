@@ -27,7 +27,7 @@ def movies_to_nrs(s_movies):
 def tropes_recommend(list_of_movies, nr_of_wanted_recs=10):
     logger = logging.getLogger('cutter')
     hdlr = logging.FileHandler('log.log')
-    formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+    formatter = logging.Formatter('%(asctime)s  %(message)s')
     hdlr.setFormatter(formatter)
     logger.addHandler(hdlr)
     logger.setLevel(logging.WARNING)

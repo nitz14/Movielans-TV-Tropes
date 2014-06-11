@@ -9,7 +9,7 @@ from files import save_file as sfile
 if __name__ == '__main__':
     logger = logging.getLogger('cutter')
     hdlr = logging.FileHandler('log.log')
-    formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+    formatter = logging.Formatter('%(asctime)s %(message)s')
     hdlr.setFormatter(formatter)
     logger.addHandler(hdlr)
     logger.setLevel(logging.WARNING)
@@ -78,7 +78,8 @@ if __name__ == '__main__':
             to_del += [trope]
     for trope in to_del:
         tropes_list.remove(trope)
-        connections_list = [connection for connection in connections_list if trope != connection[0]]
+        # connections_list = [connection for connection in connections_list if trope != connection[0]]
+    connections_list = [connection for connection in connections_list if connection[0] not in to_del]
 
     logger.warning('Only unique tropes remaining.' + str(len(tropes_list)) + " tropes. " + str(len(connections_list)) + " connections.")
     print 'Only unique tropes remaining.' + str(len(tropes_list)) + " tropes. " + str(len(connections_list)) + " connections."
