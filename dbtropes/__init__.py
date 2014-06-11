@@ -63,11 +63,15 @@ def tropes_recommend(list_of_movies, nr_of_wanted_recs=10):
     for movie in range(len(movie_list)):
         if movie not in movies_set:
             suma = 0.0
+            sum_of_sim = 0.0
             for rated in movies:
-                suma += get_similarity(sim_matrix, movie, rated[0], len(movie_list)) * float(rated[1])
-            suma = suma / weight_sum
-            if suma != 0:
-                recommended.append((suma, movie_list[movie]))
+                sim = get_similarity(sim_matrix, movie, rated[0], len(movie_list))
+                sum_of_sim += sim
+                suma += sim * (float(rated[1]) - 2.5)
+            if sum_of_sim > 0.0:
+                suma = (suma / (sum_of_sim))
+                if suma > -1.0:
+                    recommended.append((suma + 2.5, movie_list[movie]))
         # if movie % 100 == 0:
         #     logger.warning(str(movie) + ' recommendations created!')
             # print str(movie) + ' recommendations created!'
@@ -79,7 +83,7 @@ def tropes_recommend(list_of_movies, nr_of_wanted_recs=10):
 
     if len(recommended) >= nr_of_wanted_recs:
         recommended = recommended[:nr_of_wanted_recs]
-    return dict([(movie_str.split(" @|@ ")[0][1:-1], score) for (score, movie_str) in recommended])
+    return dict([(movie_str.split(" @|@ ")[0][1:-1], round(score)) for (score, movie_str) in recommended])
 
 if __name__ == '__main__':
     list_of_movies = []
