@@ -15,7 +15,6 @@ def read_ratings(users_file):
             ratings[values[0]] = [line]
         else:
             ratings[values[0]].append(line)
-
     return ratings
 
 def remove_some_scores(ratings, users, scores):
@@ -35,30 +34,78 @@ def remove_some_scores(ratings, users, scores):
 
 
 def save_removed_scores_to_file(ratings):
-    pass
+    file_name = 'temp.dat'
+    f = open(file_name,'w')
+    for user in ratings.keys():
+        for rating in ratings[user]:  
+            f.write(rating) 
+    f.close()
+    return file_name
+
+def retrieve_recommendations(alphas, removed_scores_file_path, users_wanted_recommendations):
+    users_recommended = {}
+    print "Initializing recommender..."
+    recommender = Recommender("movie_matcher/new_oliwer_data.txt", removed_scores_file_path, 0.5)
+    print "Recommender initialization done."
+
+    for alpha in alphas:
+        print "Current alfa: ", alpha
+        recommender.set_alpha(alpha)
+        users_recommended[alpha] = {}
+        for user in users_wanted_recommendations.keys():
+            print "Recommending for user: ", users_wanted_recommendations.keys()[0]
+            recommendations = recommender.recommend(users_wanted_recommendations.keys()[0])
+            users_recommended[alpha][user] = recommendations
+    print "Recommendations done."
+    return users_recommended
+
+def get_movies_list(path):
+    movies_file = open(path, 'r')
+    movies = {} 
+  
+    for line in movies_file:
+        line_data = line.split("::")        
+        movies[line_data[0]] = line_data[1]
+    return movies
+
+def print_precision_and_recall_result(alpha, precision, recall):
+    print "Alpha: ", alpha
+    print "Average precision: ", precision
+    print "Average recall: ", recall
 
 def run_training(users_file, iterations, users, scores):
     alphas = [x * (1.0/iterations) for x in range(iterations)]
     ratings = read_ratings(users_file)
-    users_wanted_recommendations = remove_some_scores(ratings, users, scores)
-    users_recommended = {}
-
     file_path = save_removed_scores_to_file(ratings)
+    movies = get_movies_list("movie_matcher/new_oliwer_data.txt")
 
-    recommender = Recommender() # tutaj podać ścieżke do oliwerowo zapisanego pliku
+    users_wanted_recommendations = remove_some_scores(ratings, users, scores)
+    users_recommended = retrieve_recommendations(alphas, file_path, users_wanted_recommendations)
 
+    precisions = {}
+    recalls = {}
 
-    for alpha in alphas:
-        users_recommended[alpha] = {}
-        for user in users_wanted_recommendations.keys():
-            recommendations = recommender.recommend(users_wanted_recommendations.keys()[0])
-            users_recommended[alpha][user] = recommendations
-
-    # teraz porównać trzeba users_wanted_recommendations i users_recommended (rozne struktury danych!!) - porówanie zrobic dla kazdego alfa i sprawdzic wyniki!
+    print "Counting precision and recall"
     for alpha in users_recommended.keys():
         user_recom = users_recommended[alpha]
-        # teraz masz slwonik {user : recomendacje jakie uzyskał w formacie [(,)(,)]}
-        # trzeba go porownac z users_wanted_recomendations: {user : [nazwy filmow]}
+        precision_sum = 0.0
+        recall_sum = 0.0
+        for user in user_recom:
+            relevant_documents = 0
+            for recommendation in users_wanted_recommendations[user]:
+                if movies[recommendation.split("::")[1]] in user_recom[user]:
+                    relevant_documents += 1
+            user_precision = float(relevant_documents) / float(len(user_recom[user]))
+            user_recall = float(relevant_documents) / (float(len(users_wanted_recommendations[user])))
+            precision_sum += user_precision
+            recall_sum += user_recall
+        precisions[alpha] = precision_sum / float(len(user_recom))
+        recalls[alpha] = recall_sum / float(len(user_recom))        
+        print_precision_and_recall_result(alpha, precisions[alpha], recalls[alpha])
+    print "Counting precision and recall is done."
+    print "Summary: "
+    for alpha in precisions.keys():
+        print_precision_and_recall_result(alpha, precisions[alpha], recalls[alpha])
 
 
 if __name__ == "__main__":

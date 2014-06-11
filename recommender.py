@@ -32,7 +32,6 @@ class Recommender:
 
         for recommendation in recommendations1.keys():
             lista[recommendation] = (1 - self.alpha) * recommendations1[recommendation]
-            
         return lista
         #return self.movie_lens_recommender.predict_ratings(userID)
         # Aby dzialalo - nalezy skopiowac do tego folderu plik movies.lst i wypakowany plik matrix-20140601.lst .
@@ -46,8 +45,22 @@ class Recommender:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-u", help="Input user.")
+    parser.add_argument("--i", help="Run program in interactive mode", action="store_true")
     args = parser.parse_args()
 
+    print "Wczytuje dane..."
     recommender = Recommender()
-    result = recommender.recommend(args.u)
-    print result
+    print "Program jest gotowy do działania!"
+
+    if args.i:
+        print "Wpisz exit() aby zatrzymać program."
+        while True:
+            print "Pytanie:"
+            s = raw_input()
+            if "exit()" in s:
+                exit()
+        result = recommender.recommend(s)
+        print result
+    else:
+        result = recommender.recommend(args.u)
+        print result
