@@ -21,7 +21,8 @@ class Recommender:
     def recommend(self, userID):
         lista = {}
         recommendations = self.movie_lens_recommender.predict_ratings(userID)
-        recommendations1 = dbt_rec([name for (name, _) in self.movie_lens_recommender.get_rated_movies(userID)])
+        print len(recommendations)
+        recommendations1 = dbt_rec(self.movie_lens_recommender.get_rated_movies(userID))
 
         for recommendation in recommendations:
             if recommendation[0] in recommendations1:
@@ -60,7 +61,7 @@ if __name__ == "__main__":
             if "exit()" in s:
                 exit()
         result = recommender.recommend(s)
-        print result
+        #print result
     else:
         result = recommender.recommend(args.u)
-        print result
+        #print result
