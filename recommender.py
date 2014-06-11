@@ -14,7 +14,7 @@ odleglosc(f,f2) = waga1 * odleglosc_ocenowa(f,f2) + waga2 + 1 / (1 + odleglosc_t
 """
 
 class Recommender:
-    def __init__(self, movies = "movie_lens/movies.dat", ratings = "movie_lens/ratings.dat", alpha=0.5):
+    def __init__(self, movies = "movie_matcher/new_oliwer_data.txt", ratings = "movie_lens/ratings.dat", alpha=0.5):
         self.movie_lens_recommender = MovieLens.MovieLens(movies, ratings)
         self.alpha = alpha
 
