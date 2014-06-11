@@ -27,7 +27,7 @@ def movies_to_nrs(s_movies):
 def tropes_recommend(list_of_movies, nr_of_wanted_recs):
     logger = logging.getLogger('cutter')
     hdlr = logging.FileHandler('log.log')
-    formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+    formatter = logging.Formatter('%(asctime)s  %(message)s')
     hdlr.setFormatter(formatter)
     logger.addHandler(hdlr)
     logger.setLevel(logging.WARNING)
@@ -35,6 +35,9 @@ def tropes_recommend(list_of_movies, nr_of_wanted_recs):
     movies = movies_to_nrs(sorted(list_of_movies))
     logger.warning('Movies transformed into numbers - ' + str(len(movies)) + ' transformed correctly!')
     print 'Movies transformed into numbers - ' + str(len(movies)) + ' transformed correctly!'
+
+    if len(movies) == 0:
+        return dict()
 
     matrix = ofile("matrix-20140601.lst")
     logger.warning('Matrix loaded!')
