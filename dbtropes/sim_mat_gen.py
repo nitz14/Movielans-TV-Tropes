@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import codecs
 import logging
+import numpy
 import sys
 
 from scipy.spatial.distance import pdist
@@ -10,15 +12,6 @@ from files import open_file as ofile
 from files import save_file as sfile
 
 logger = None
-
-#def str_2_fl_matrix(matrix):
-    #ret_mat = []
-    #for col in range(len(matrix[0])):
-        #new_row = []
-        #for elem in range(len(matrix)):
-            #new_row.append(float(matrix[elem][col]))
-        #ret_mat.append(new_row)
-    #return ret_mat
 
 # Availible metrics:
 # http://docs.scipy.org/doc/scipy/reference/spatial.distance.html
@@ -32,20 +25,9 @@ def create_similarity_matrix(matrix, metric='euclidean'):
             nxt_row.append(nxt_val)
         ret_mat.append(nxt_row)
         if iterator % 100 == 0:
-            logger.warning(str(iterator) + " movies completed.")
+            #logger.warning(str(iterator) + " movies completed.")
             print str(iterator) + " movies completed."
     return ret_mat
-
-def tr_mat_2_str_lst(matrix, nr_of_movies):
-    string_list = []
-
-    for iterator in range(len(matrix)):
-        string = ''
-        for jterator in range(iterator):
-            string += str(matrix[iterator])
-        string_list.append(string)
-
-    return string_list
 
 if __name__ == '__main__':
     logger = logging.getLogger('cutter')
@@ -58,7 +40,8 @@ if __name__ == '__main__':
     metric = 'euclidean'
 
     try:
-        metric = sys.argv[0]
+        metric = sys.argv[1]
+        print metric
     except:
         logger.warning('Unknown metric given as argument!')
         print 'Unknown metric given as argument!'
@@ -76,12 +59,13 @@ if __name__ == '__main__':
     logger.warning('Matrix represented as floats!')
     print 'Matrix represented as floats!'
 
-    similarity_mtx = create_similarity_matrix(matrix)
+    # similarity_mtx = create_similarity_matrix(matrix)
+    similarity_mtx = pdist(matrix, metric)
 
     logger.warning('Distances calculated!')
     print 'Distances calculated!'
 
-    sfile('\n'.join(tr_mat_2_str_lst(similarity_mtx, len(matrix)), "similarity.lst"))
+    numpy.savetxt('similarity.lst', similarity_mtx, fmt="%s")
 
     logger.warning('Triangle matrix of distances saved.')
     print 'Triangle matrix of distances saved.'
