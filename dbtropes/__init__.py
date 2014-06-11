@@ -24,7 +24,7 @@ def movies_to_nrs(s_movies):
         m_counter += 1
     return ret_list
 
-def tropes_recommend(list_of_movies, nr_of_wanted_recs):
+def tropes_recommend(list_of_movies, nr_of_wanted_recs=10):
     logger = logging.getLogger('cutter')
     hdlr = logging.FileHandler('log.log')
     formatter = logging.Formatter('%(asctime)s  %(message)s')
@@ -82,6 +82,6 @@ if __name__ == '__main__':
     for line in sys.stdin:
         if len(line[:-1]) > 0:
             list_of_movies.append(line[:-1])
-    rec_list = tropes_recommend(list_of_movies, 10)
+    rec_list = tropes_recommend(list_of_movies)
     for movie in rec_list:
         print movie + " scored " + str(rec_list[movie]) + " points!"

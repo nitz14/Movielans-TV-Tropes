@@ -8,12 +8,9 @@ class TestMovieLens(unittest.TestCase):
     def setUp(self):
         self.movie_lens = ML.MovieLens('test_movies.dat', 'test_ratings.dat')
 
-    def test_ratings(self):
-         self.assertEqual(self.movie_lens.is_rated('Franek', 'Liberator'), True)
-         self.assertEqual(self.movie_lens.is_rated('Darek', 'Szczeki'), False)
-         self.assertEqual(self.movie_lens.get_rating('Asia', 'Mis'), 2.5)
-         self.assertEqual(self.movie_lens.get_rating('Genia', 'Terminator'), 0)
-
+    def test_rated_movies(self):
+         self.assertEqual(len(self.movie_lens.get_rated_movies('Asia')), 6)
+         
     def test_correlation(self):
         self.assertEqual(self.movie_lens.pcc('Asia', 'Genia'), 0.991)
         self.assertEqual(self.movie_lens.pcc('Czarek', 'Czarek'), 1.0)
