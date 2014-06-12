@@ -52,10 +52,12 @@ def retrieve_recommendations(alphas, removed_scores_file_path, users_wanted_reco
         print "Current alfa: ", alpha
         recommender.set_alpha(alpha)
         users_recommended[alpha] = {}
+        i = 0
         for user in users_wanted_recommendations.keys():
-            print "Recommending for user: ", users_wanted_recommendations.keys()[0]
-            recommendations = recommender.recommend(users_wanted_recommendations.keys()[0])
+            print "Recommending for user: ", users_wanted_recommendations.keys()[i]
+            recommendations = recommender.recommend(users_wanted_recommendations.keys()[i])
             users_recommended[alpha][user] = recommendations
+            i += 1
     print "Recommendations done."
     return users_recommended
 
